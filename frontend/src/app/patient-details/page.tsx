@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { generatePatientReport } from "../../utils/pdfGenerator";
 
-export default function PatientDetailsPage() {
+function PatientDetailsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const patientId = searchParams.get('id');
@@ -414,5 +414,16 @@ export default function PatientDetailsPage() {
                 </motion.div>
             )}
         </div>
+    );
+}
+
+
+export default function PatientDetailsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#F4F7F9] flex items-center justify-center">
+            <div className="text-[#3B6F8E]">Loading...</div>
+        </div>}>
+            <PatientDetailsContent />
+        </Suspense>
     );
 }

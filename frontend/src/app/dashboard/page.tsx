@@ -446,7 +446,7 @@ export default function DoctorDashboard() {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 bg-gradient-to-br from-[#3B6F8E] to-[#56B79A] rounded-xl flex items-center justify-center text-white font-bold">
-                                                    {patient.name.split(' ').map(n => n[0]).join('')}
+                                                    {patient.name.split(' ').map((n: string) => n[0]).join('')}
                                                 </div>
                                                 <div>
                                                     <h3 className="font-bold text-[#3B6F8E]">{patient.name}</h3>

@@ -59,9 +59,9 @@ export default function MonitorPage() {
                     theta: Number(r.theta ?? r.Theta) || 0,
                 }));
 
-                const persons = [...new Set(rows.map((r: any) => r.person))];
+                const persons = [...new Set(rows.map((r: any) => r.person))] as string[];
 
-                const stats = persons.map((p: string) => {
+                const stats = persons.map((p) => {
                     const userData = rows.filter((r: any) => r.person === p);
                     const avg = (key: string) =>
                         (userData.reduce((s: number, d: any) => s + d[key], 0) / userData.length).toFixed(2);
@@ -78,10 +78,10 @@ export default function MonitorPage() {
                 const first = persons[0] || "";
 
                 const totalAvg = {
-                    alpha: rows.reduce((s, d) => s + d.alpha, 0) / rows.length,
-                    beta: rows.reduce((s, d) => s + d.beta, 0) / rows.length,
-                    gamma: rows.reduce((s, d) => s + d.gamma, 0) / rows.length,
-                    theta: rows.reduce((s, d) => s + d.theta, 0) / rows.length,
+                    alpha: rows.reduce((s: number, d: any) => s + d.alpha, 0) / rows.length,
+                    beta: rows.reduce((s: number, d: any) => s + d.beta, 0) / rows.length,
+                    gamma: rows.reduce((s: number, d: any) => s + d.gamma, 0) / rows.length,
+                    theta: rows.reduce((s: number, d: any) => s + d.theta, 0) / rows.length,
                 };
 
                 let state = "Neutral";

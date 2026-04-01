@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+/* ===== BASE ===== */
+body {
+    background: #F4F7F9;
+    color: #2C3E50;
+    font-family: system-ui, sans-serif;
+}
+
+/* ===== CONTAINER ===== */
+.container-center {
+    @apply flex items-center justify-center min-h-screen;
+}
+
+/* ===== CARD ===== */
+.card {
+    @apply bg-white rounded-2xl border border-[#D6E0E7] shadow-md p-6;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(59, 111, 142, 0.15);
+}
+
+/* ===== INPUT ===== */
+.input {
+    @apply w-full p-3 rounded-xl border border-[#D6E0E7] bg-[#EEF3F6] text-[#2C3E50] outline-none;
+    transition: all 0.3s ease;
+}
+
+.input:focus {
+    border-color: #56B79A;
+    box-shadow: 0 0 0 3px rgba(86, 183, 154, 0.1);
+}
+
+/* ===== BUTTON ===== */
+.btn-primary {
+    @apply bg-[#56B79A] hover:bg-[#4da88d] text-white font-semibold py-3 rounded-xl;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(86, 183, 154, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    @apply bg-[#3B6F8E] hover:bg-[#315e77] text-white font-semibold py-3 rounded-xl;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(59, 111, 142, 0.3);
+}
+
+/* ===== TOGGLE BUTTON ===== */
+.toggle-group {
+    @apply flex bg-[#E6EDF2] p-1 rounded-xl;
+}
+
+.toggle-btn {
+    @apply flex-1 py-2 text-center rounded-lg cursor-pointer text-sm font-medium;
+    transition: all 0.3s ease;
+}
+
+.toggle-active {
+    @apply bg-white shadow text-[#2C3E50];
+}
+
+/* ===== HEADER ===== */
+.topbar {
+    @apply flex items-center justify-between px-8 py-4 bg-white border-b border-[#D6E0E7];
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+/* ===== NAV LINK ===== */
+.nav-link {
+    @apply text-[#2C3E50] font-medium tracking-wide;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #56B79A;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #56B79A;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* ===== BADGE ===== */
+.badge {
+    @apply border border-[#56B79A] text-[#56B79A] px-3 py-1 rounded-full text-sm;
+    animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(86, 183, 154, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(86, 183, 154, 0);
+    }
+}
+
+/* ===== TITLE ===== */
+.title {
+    @apply text-3xl font-bold text-[#3B6F8E];
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #E6EDF2 25%,
+        #F4F7F9 50%,
+        #E6EDF2 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scale-in {
+    animation: scaleIn 0.4s ease-out;
+}
+
+/* ===== UPLOAD BOX ===== */
+.upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #56B79A;
+    padding: 32px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(86, 183, 154, 0.05) 0%, rgba(59, 111, 142, 0.05) 100%);
+}
+
+.upload-box:hover {
+    border-color: #3B6F8E;
+    background: linear-gradient(135deg, rgba(86, 183, 154, 0.1) 0%, rgba(59, 111, 142, 0.1) 100%);
+    transform: scale(1.02);
+}
+
+/* ===== GLASS EFFECT ===== */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(214, 224, 231, 0.5);
+    padding: 16px;
+    border-radius: 16px;
+}
+
+/* ===== LOADING SPINNER ===== */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    border: 3px solid #E6EDF2;
+    border-top-color: #56B79A;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+    height: 4px;
+    background: #E6EDF2;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #56B79A 0%, #3B6F8E 100%);
+    transition: width 0.3s ease;
+}
+
+/* ===== TOOLTIP ===== */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 8px 12px;
+    background: #2C3E50;
+    color: white;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tooltip:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+}

@@ -1,8 +1,5 @@
 {
   "/access/page": "app/access/page.js",
-  "/analysis/page": "app/analysis/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/monitor/page": "app/monitor/page.js",
   "/page": "app/page.js",
-  "/patient-details/page": "app/patient-details/page.js"
+  "/patient-reports/page": "app/patient-reports/page.js"
 }

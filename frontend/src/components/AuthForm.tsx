@@ -29,7 +29,7 @@ export default function AuthForm() {
                 return;
             }
         } else {
-            if (!formData.name || !formData.phone) {
+            if (!formData.name || !formData.phone || !formData.email) {
                 alert("Please fill in all required fields");
                 return;
             }
@@ -41,35 +41,59 @@ export default function AuthForm() {
 
         setIsLoading(true);
 
-        // Simulate OTP sending and auto-login (replace with actual API call)
-        setTimeout(() => {
-            setOtpSent(true);
+        try {
+            // Call backend API to register/login user
+            const response = await fetch('http://localhost:5000/api/auth/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name || "User",
+                    email: formData.email || `${formData.patientId}@example.com`,
+                    phone: formData.phone,
+                    patientId: formData.patientId || `${role.toUpperCase()}-${Date.now()}`,
+                    role: role
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setOtpSent(true);
+                
+                // Store user data in localStorage
+                const userData = {
+                    id: data.user.patientId,
+                    name: data.user.name,
+                    role: data.user.role,
+                    phone: data.user.phone,
+                    email: data.user.email
+                };
+                
+                localStorage.setItem("user", JSON.stringify(userData));
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    if (role === "admin") {
+                        window.location.href = "/admin";
+                    } else if (role === "doctor") {
+                        window.location.href = "/dashboard";
+                    } else {
+                        window.location.href = "/patient-reports";
+                    }
+                }, 1000);
+                
+                alert(`${data.message}! Logging in as ${role}...`);
+            } else {
+                alert(data.message || "Authentication failed");
+            }
+        } catch (error) {
+            console.error('Authentication error:', error);
+            alert("Error connecting to server. Please try again.");
+        } finally {
             setIsLoading(false);
-            
-            // Auto-login after OTP (simulated)
-            const userData = {
-                id: mode === "login" ? formData.patientId : `${role === "admin" ? "A" : role === "doctor" ? "D" : "P"}${Date.now()}`,
-                name: mode === "login" ? "User" : formData.name,
-                role: role as "doctor" | "patient" | "admin",
-                phone: formData.phone
-            };
-            
-            // Store in localStorage and redirect
-            localStorage.setItem("user", JSON.stringify(userData));
-            
-            // Redirect based on role
-            setTimeout(() => {
-                if (role === "admin") {
-                    window.location.href = "/admin";
-                } else if (role === "doctor") {
-                    window.location.href = "/dashboard";
-                } else {
-                    window.location.href = "/patient-reports";
-                }
-            }, 1000);
-            
-            alert(`OTP verified! Logging in as ${role}...`);
-        }, 1500);
+        }
     };
 
     const isFormValid = () => {
@@ -77,9 +101,9 @@ export default function AuthForm() {
             return formData.patientId && formData.phone;
         } else {
             if (role === "doctor") {
-                return formData.name && formData.designation && formData.phone;
+                return formData.name && formData.designation && formData.phone && formData.email;
             }
-            return formData.name && formData.phone;
+            return formData.name && formData.phone && formData.email;
         }
     };
 

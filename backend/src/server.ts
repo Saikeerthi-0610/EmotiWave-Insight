@@ -5,6 +5,7 @@ import { connectDB } from "./config/database.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
 import scanRoutes from "./routes/scanRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
         version: "1.0.0",
         endpoints: {
             health: "/api/health",
+            auth: "/api/auth",
             upload: "/api/upload",
             patients: "/api/patients",
             scans: "/api/scans"
@@ -38,6 +40,7 @@ app.get("/.well-known/*", (req, res) => {
     res.status(404).json({ error: "Not found" });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/scans", scanRoutes);

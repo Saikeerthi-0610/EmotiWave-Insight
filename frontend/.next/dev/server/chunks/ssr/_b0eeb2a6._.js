@@ -44,7 +44,7 @@ function AuthForm() {
                 return;
             }
         } else {
-            if (!formData.name || !formData.phone) {
+            if (!formData.name || !formData.phone || !formData.email) {
                 alert("Please fill in all required fields");
                 return;
             }
@@ -54,40 +54,62 @@ function AuthForm() {
             }
         }
         setIsLoading(true);
-        // Simulate OTP sending and auto-login (replace with actual API call)
-        setTimeout(()=>{
-            setOtpSent(true);
+        try {
+            // Call backend API to register/login user
+            const response = await fetch('http://localhost:5000/api/auth/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: formData.name || "User",
+                    email: formData.email || `${formData.patientId}@example.com`,
+                    phone: formData.phone,
+                    patientId: formData.patientId || `${role.toUpperCase()}-${Date.now()}`,
+                    role: role
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setOtpSent(true);
+                // Store user data in localStorage
+                const userData = {
+                    id: data.user.patientId,
+                    name: data.user.name,
+                    role: data.user.role,
+                    phone: data.user.phone,
+                    email: data.user.email
+                };
+                localStorage.setItem("user", JSON.stringify(userData));
+                // Redirect based on role
+                setTimeout(()=>{
+                    if (role === "admin") {
+                        window.location.href = "/admin";
+                    } else if (role === "doctor") {
+                        window.location.href = "/dashboard";
+                    } else {
+                        window.location.href = "/patient-reports";
+                    }
+                }, 1000);
+                alert(`${data.message}! Logging in as ${role}...`);
+            } else {
+                alert(data.message || "Authentication failed");
+            }
+        } catch (error) {
+            console.error('Authentication error:', error);
+            alert("Error connecting to server. Please try again.");
+        } finally{
             setIsLoading(false);
-            // Auto-login after OTP (simulated)
-            const userData = {
-                id: mode === "login" ? formData.patientId : `${role === "admin" ? "A" : role === "doctor" ? "D" : "P"}${Date.now()}`,
-                name: mode === "login" ? "User" : formData.name,
-                role: role,
-                phone: formData.phone
-            };
-            // Store in localStorage and redirect
-            localStorage.setItem("user", JSON.stringify(userData));
-            // Redirect based on role
-            setTimeout(()=>{
-                if (role === "admin") {
-                    window.location.href = "/admin";
-                } else if (role === "doctor") {
-                    window.location.href = "/dashboard";
-                } else {
-                    window.location.href = "/patient-reports";
-                }
-            }, 1000);
-            alert(`OTP verified! Logging in as ${role}...`);
-        }, 1500);
+        }
     };
     const isFormValid = ()=>{
         if (mode === "login") {
             return formData.patientId && formData.phone;
         } else {
             if (role === "doctor") {
-                return formData.name && formData.designation && formData.phone;
+                return formData.name && formData.designation && formData.phone && formData.email;
             }
-            return formData.name && formData.phone;
+            return formData.name && formData.phone && formData.email;
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -110,14 +132,14 @@ function AuthForm() {
                 className: "absolute top-0 right-0 w-32 h-32 bg-[#56B79A] opacity-5 rounded-full -mr-16 -mt-16"
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 94,
+                lineNumber: 118,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "absolute bottom-0 left-0 w-24 h-24 bg-[#3B6F8E] opacity-5 rounded-full -ml-12 -mb-12"
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 95,
+                lineNumber: 119,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -134,12 +156,12 @@ function AuthForm() {
                     size: 32
                 }, void 0, false, {
                     fileName: "[project]/src/components/AuthForm.tsx",
-                    lineNumber: 103,
+                    lineNumber: 127,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 98,
+                lineNumber: 122,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].h2, {
@@ -156,7 +178,7 @@ function AuthForm() {
                 children: "Welcome Back"
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 106,
+                lineNumber: 130,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -173,7 +195,7 @@ function AuthForm() {
                 children: "Access your neural health dashboard"
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 114,
+                lineNumber: 138,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -192,7 +214,7 @@ function AuthForm() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 125,
+                        lineNumber: 149,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -204,7 +226,7 @@ function AuthForm() {
                         children: "Login"
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 132,
+                        lineNumber: 156,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -216,13 +238,13 @@ function AuthForm() {
                         children: "Register"
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 141,
+                        lineNumber: 165,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 124,
+                lineNumber: 148,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -244,7 +266,7 @@ function AuthForm() {
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 154,
+                        lineNumber: 178,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -259,7 +281,7 @@ function AuthForm() {
                         children: "Patient"
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 164,
+                        lineNumber: 188,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -274,7 +296,7 @@ function AuthForm() {
                         children: "Doctor"
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 174,
+                        lineNumber: 198,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -289,13 +311,13 @@ function AuthForm() {
                         children: "Admin"
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 184,
+                        lineNumber: 208,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 153,
+                lineNumber: 177,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -340,12 +362,12 @@ function AuthForm() {
                                         onChange: (e)=>handleInputChange("name", e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthForm.tsx",
-                                        lineNumber: 214,
+                                        lineNumber: 238,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/AuthForm.tsx",
-                                    lineNumber: 208,
+                                    lineNumber: 232,
                                     columnNumber: 29
                                 }, this),
                                 role === "doctor" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -368,12 +390,12 @@ function AuthForm() {
                                         onChange: (e)=>handleInputChange("designation", e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/AuthForm.tsx",
-                                        lineNumber: 228,
+                                        lineNumber: 252,
                                         columnNumber: 37
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/AuthForm.tsx",
-                                    lineNumber: 222,
+                                    lineNumber: 246,
                                     columnNumber: 33
                                 }, this)
                             ]
@@ -398,12 +420,12 @@ function AuthForm() {
                                 onChange: (e)=>handleInputChange("patientId", e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthForm.tsx",
-                                lineNumber: 246,
+                                lineNumber: 270,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 240,
+                            lineNumber: 264,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -427,12 +449,12 @@ function AuthForm() {
                                 onChange: (e)=>handleInputChange("phone", e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthForm.tsx",
-                                lineNumber: 261,
+                                lineNumber: 285,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 255,
+                            lineNumber: 279,
                             columnNumber: 21
                         }, this),
                         mode === "register" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -456,23 +478,23 @@ function AuthForm() {
                                 onChange: (e)=>handleInputChange("email", e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthForm.tsx",
-                                lineNumber: 277,
+                                lineNumber: 301,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 271,
+                            lineNumber: 295,
                             columnNumber: 25
                         }, this)
                     ]
                 }, mode + role, true, {
                     fileName: "[project]/src/components/AuthForm.tsx",
-                    lineNumber: 198,
+                    lineNumber: 222,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 197,
+                lineNumber: 221,
                 columnNumber: 13
             }, this),
             otpSent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -491,7 +513,7 @@ function AuthForm() {
                         size: 18
                     }, void 0, false, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 296,
+                        lineNumber: 320,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -502,13 +524,13 @@ function AuthForm() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/AuthForm.tsx",
-                        lineNumber: 297,
+                        lineNumber: 321,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 291,
+                lineNumber: 315,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].button, {
@@ -527,14 +549,14 @@ function AuthForm() {
                             className: "w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 315,
+                            lineNumber: 339,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                             children: "Sending..."
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 316,
+                            lineNumber: 340,
                             columnNumber: 25
                         }, this)
                     ]
@@ -544,7 +566,7 @@ function AuthForm() {
                             children: mode === "login" ? "Request OTP" : "Register & Get OTP"
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 320,
+                            lineNumber: 344,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -563,19 +585,19 @@ function AuthForm() {
                                 size: 20
                             }, void 0, false, {
                                 fileName: "[project]/src/components/AuthForm.tsx",
-                                lineNumber: 325,
+                                lineNumber: 349,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/AuthForm.tsx",
-                            lineNumber: 321,
+                            lineNumber: 345,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true)
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 302,
+                lineNumber: 326,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -592,13 +614,13 @@ function AuthForm() {
                 children: "By continuing, you agree to our Terms of Service and Privacy Policy"
             }, void 0, false, {
                 fileName: "[project]/src/components/AuthForm.tsx",
-                lineNumber: 332,
+                lineNumber: 356,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/AuthForm.tsx",
-        lineNumber: 87,
+        lineNumber: 111,
         columnNumber: 9
     }, this);
 }

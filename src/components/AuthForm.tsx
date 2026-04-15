@@ -43,7 +43,8 @@ export default function AuthForm() {
 
         try {
             // Call backend API to register/login user
-            const response = await fetch('http://localhost:5000/api/auth/authenticate', {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+            const response = await fetch(`${apiUrl}/api/auth/authenticate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -9,6 +9,7 @@ The CORS error was happening because your deployed frontend was trying to access
 1. **AuthForm.tsx** - Now uses environment variable for API URL
 2. **api.ts** - Now uses environment variable for API URL
 3. **Created .env.example** - Template for environment variables
+4. **Improved Error Handling** - App now gracefully falls back to demo mode when backend is unavailable (no more error alerts!)
 
 ## 🚀 How to Make It Work on Vercel:
 
@@ -81,8 +82,9 @@ You need to deploy your backend first, then connect it:
 - ✅ All pages load
 - ✅ Authentication works (localStorage only)
 - ✅ Dashboard works
-- ❌ MongoDB data won't be saved
-- ❌ Backend API calls will fail (but app won't crash)
+- ✅ Graceful fallback to demo mode (no error messages!)
+- ✅ App won't crash even if backend is down
+- ❌ MongoDB data won't be saved (uses localStorage instead)
 
 ### With Backend URL (After Step 2):
 - ✅ Everything works

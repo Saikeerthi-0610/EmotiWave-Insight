@@ -18,6 +18,189 @@ import {
 } from "lucide-react";
 import { generatePatientReport } from "../../utils/pdfGenerator";
 
+// Mock reports data for demo purposes
+const mockReportsData: any = {
+    "P001": [
+        {
+            id: "R001",
+            patientId: "P001",
+            patientName: "John Doe",
+            date: "2024-03-20",
+            emotion: "Positive",
+            dominantWave: "Alpha",
+            accuracy: "98.59%",
+            dataPoints: 150,
+            frequencies: { alpha: 45, beta: 25, gamma: 15, theta: 35 },
+            notes: "Patient shows strong positive emotional state with high alpha wave activity. Recommended for continued monitoring.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R002",
+            patientId: "P001",
+            patientName: "John Doe",
+            date: "2024-03-15",
+            emotion: "Neutral",
+            dominantWave: "Beta",
+            accuracy: "98.59%",
+            dataPoints: 142,
+            frequencies: { alpha: 30, beta: 40, gamma: 18, theta: 28 },
+            notes: "Balanced emotional state observed. Beta waves indicate active cognitive processing.",
+            duration: "4 minutes"
+        },
+        {
+            id: "R003",
+            patientId: "P001",
+            patientName: "John Doe",
+            date: "2024-03-10",
+            emotion: "Positive",
+            dominantWave: "Alpha",
+            accuracy: "98.59%",
+            dataPoints: 145,
+            frequencies: { alpha: 48, beta: 22, gamma: 12, theta: 38 },
+            notes: "Excellent relaxation response. High alpha and theta waves indicate deep calm state.",
+            duration: "6 minutes"
+        },
+        {
+            id: "R004",
+            patientId: "P001",
+            patientName: "John Doe",
+            date: "2024-03-05",
+            emotion: "Neutral",
+            dominantWave: "Beta",
+            accuracy: "98.59%",
+            dataPoints: 138,
+            frequencies: { alpha: 32, beta: 38, gamma: 16, theta: 30 },
+            notes: "Normal cognitive activity. Patient in focused state during recording.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R005",
+            patientId: "P001",
+            patientName: "John Doe",
+            date: "2024-02-28",
+            emotion: "Positive",
+            dominantWave: "Theta",
+            accuracy: "98.59%",
+            dataPoints: 152,
+            frequencies: { alpha: 42, beta: 20, gamma: 10, theta: 45 },
+            notes: "Deep meditative state achieved. Excellent theta wave production.",
+            duration: "7 minutes"
+        }
+    ],
+    "P002": [
+        {
+            id: "R006",
+            patientId: "P002",
+            patientName: "Sarah Smith",
+            date: "2024-03-19",
+            emotion: "Neutral",
+            dominantWave: "Alpha",
+            accuracy: "98.59%",
+            dataPoints: 138,
+            frequencies: { alpha: 35, beta: 32, gamma: 15, theta: 30 },
+            notes: "Stable emotional baseline. Good balance across all frequency bands.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R007",
+            patientId: "P002",
+            patientName: "Sarah Smith",
+            date: "2024-03-12",
+            emotion: "Positive",
+            dominantWave: "Alpha",
+            accuracy: "98.59%",
+            dataPoints: 144,
+            frequencies: { alpha: 46, beta: 24, gamma: 12, theta: 36 },
+            notes: "Positive emotional response with strong relaxation indicators.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R008",
+            patientId: "P002",
+            patientName: "Sarah Smith",
+            date: "2024-03-05",
+            emotion: "Neutral",
+            dominantWave: "Beta",
+            accuracy: "98.59%",
+            dataPoints: 140,
+            frequencies: { alpha: 30, beta: 38, gamma: 18, theta: 28 },
+            notes: "Active mental state. Patient engaged in cognitive tasks during session.",
+            duration: "4 minutes"
+        }
+    ],
+    "P003": [
+        {
+            id: "R009",
+            patientId: "P003",
+            patientName: "Michael Johnson",
+            date: "2024-03-18",
+            emotion: "Negative",
+            dominantWave: "Beta",
+            accuracy: "98.59%",
+            dataPoints: 135,
+            frequencies: { alpha: 20, beta: 50, gamma: 25, theta: 18 },
+            notes: "Elevated stress indicators. High beta and gamma activity suggests anxiety. Recommend follow-up.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R010",
+            patientId: "P003",
+            patientName: "Michael Johnson",
+            date: "2024-03-12",
+            emotion: "Negative",
+            dominantWave: "Gamma",
+            accuracy: "98.59%",
+            dataPoints: 132,
+            frequencies: { alpha: 18, beta: 48, gamma: 28, theta: 16 },
+            notes: "Continued elevated stress levels. Recommend stress management intervention.",
+            duration: "5 minutes"
+        }
+    ],
+    "P004": [
+        {
+            id: "R011",
+            patientId: "P004",
+            patientName: "Emily Davis",
+            date: "2024-03-17",
+            emotion: "Positive",
+            dominantWave: "Alpha",
+            accuracy: "98.59%",
+            dataPoints: 148,
+            frequencies: { alpha: 44, beta: 26, gamma: 14, theta: 34 },
+            notes: "Excellent emotional state. Strong alpha wave activity indicates relaxation.",
+            duration: "5 minutes"
+        },
+        {
+            id: "R012",
+            patientId: "P004",
+            patientName: "Emily Davis",
+            date: "2024-03-10",
+            emotion: "Positive",
+            dominantWave: "Theta",
+            accuracy: "98.59%",
+            dataPoints: 150,
+            frequencies: { alpha: 40, beta: 22, gamma: 12, theta: 42 },
+            notes: "Deep relaxation achieved. Excellent theta wave production.",
+            duration: "6 minutes"
+        }
+    ],
+    "P005": [
+        {
+            id: "R013",
+            patientId: "P005",
+            patientName: "Robert Wilson",
+            date: "2024-03-15",
+            emotion: "Neutral",
+            dominantWave: "Beta",
+            accuracy: "98.59%",
+            dataPoints: 140,
+            frequencies: { alpha: 32, beta: 36, gamma: 16, theta: 28 },
+            notes: "Balanced cognitive state. Normal brain wave activity observed.",
+            duration: "5 minutes"
+        }
+    ]
+};
+
 function PatientDetailsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -48,7 +231,15 @@ function PatientDetailsContent() {
                         if (storedReports) {
                             const allReports = JSON.parse(storedReports);
                             const patientReports = allReports.filter((r: any) => r.patientId === patientId);
-                            setReports(patientReports);
+                            if (patientReports.length > 0) {
+                                setReports(patientReports);
+                            } else {
+                                // Use mock reports if no real reports found
+                                setReports(mockReportsData[patientId] || []);
+                            }
+                        } else {
+                            // Use mock reports if localStorage is empty
+                            setReports(mockReportsData[patientId] || []);
                         }
                         return;
                     }
@@ -84,20 +275,39 @@ function PatientDetailsContent() {
                 }
             }
             
-            // If no reports found, create mock patient data
-            setPatient({
-                id: patientId,
-                name: patientId,
-                age: 30,
-                gender: "Unknown",
-                phone: "+1 234-567-8900",
-                email: `${patientId.toLowerCase()}@example.com`,
-                address: "123 Medical Center Dr",
-                totalScans: 0,
-                latestEmotion: "Neutral",
-                lastVisit: new Date().toISOString().split('T')[0]
-            });
-            setReports([]);
+            // If no reports found, use mock reports for demo
+            const mockReports = mockReportsData[patientId] || [];
+            setReports(mockReports);
+            
+            if (mockReports.length > 0) {
+                const latestReport = mockReports[0];
+                setPatient({
+                    id: patientId,
+                    name: latestReport.patientName,
+                    age: 30,
+                    gender: "Unknown",
+                    phone: "+1 234-567-8900",
+                    email: `${patientId.toLowerCase()}@example.com`,
+                    address: "123 Medical Center Dr",
+                    totalScans: mockReports.length,
+                    latestEmotion: latestReport.emotion,
+                    lastVisit: latestReport.date
+                });
+            } else {
+                // Fallback to basic patient data
+                setPatient({
+                    id: patientId,
+                    name: patientId,
+                    age: 30,
+                    gender: "Unknown",
+                    phone: "+1 234-567-8900",
+                    email: `${patientId.toLowerCase()}@example.com`,
+                    address: "123 Medical Center Dr",
+                    totalScans: 0,
+                    latestEmotion: "Neutral",
+                    lastVisit: new Date().toISOString().split('T')[0]
+                });
+            }
         };
 
         loadPatientData();

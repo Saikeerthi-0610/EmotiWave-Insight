@@ -33,33 +33,74 @@ function PatientDetailsContent() {
             return;
         }
 
-        // Load patient data from localStorage
-        const storedReports = localStorage.getItem("patientReports");
-        if (storedReports) {
-            const allReports = JSON.parse(storedReports);
-            const patientReports = allReports.filter((r: any) => r.patientId === patientId);
-            
-            if (patientReports.length > 0) {
-                setReports(patientReports);
-                
-                // Create patient object from reports
-                const latestReport = patientReports[0];
-                setPatient({
-                    id: patientId,
-                    name: latestReport.patientName,
-                    age: 30,
-                    gender: "Unknown",
-                    phone: "+1 234-567-8900",
-                    email: `${patientId.toLowerCase()}@example.com`,
-                    address: "123 Medical Center Dr",
-                    totalScans: patientReports.length,
-                    latestEmotion: latestReport.emotion,
-                    lastVisit: latestReport.date
-                });
-            } else {
-                router.push('/dashboard');
+        // Immediately load patient data from localStorage cache for instant display
+        const loadPatientData = () => {
+            // First try to get cached patient data for instant load
+            const cachedPatient = localStorage.getItem('selectedPatient');
+            if (cachedPatient) {
+                try {
+                    const patientData = JSON.parse(cachedPatient);
+                    if (patientData.id === patientId) {
+                        setPatient(patientData);
+                        
+                        // Load reports in background
+                        const storedReports = localStorage.getItem("patientReports");
+                        if (storedReports) {
+                            const allReports = JSON.parse(storedReports);
+                            const patientReports = allReports.filter((r: any) => r.patientId === patientId);
+                            setReports(patientReports);
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    console.error('Error loading cached patient:', e);
+                }
             }
-        }
+            
+            // Fallback: Load from reports
+            const storedReports = localStorage.getItem("patientReports");
+            if (storedReports) {
+                const allReports = JSON.parse(storedReports);
+                const patientReports = allReports.filter((r: any) => r.patientId === patientId);
+                
+                if (patientReports.length > 0) {
+                    setReports(patientReports);
+                    
+                    // Create patient object from reports
+                    const latestReport = patientReports[0];
+                    setPatient({
+                        id: patientId,
+                        name: latestReport.patientName,
+                        age: 30,
+                        gender: "Unknown",
+                        phone: "+1 234-567-8900",
+                        email: `${patientId.toLowerCase()}@example.com`,
+                        address: "123 Medical Center Dr",
+                        totalScans: patientReports.length,
+                        latestEmotion: latestReport.emotion,
+                        lastVisit: latestReport.date
+                    });
+                    return;
+                }
+            }
+            
+            // If no reports found, create mock patient data
+            setPatient({
+                id: patientId,
+                name: patientId,
+                age: 30,
+                gender: "Unknown",
+                phone: "+1 234-567-8900",
+                email: `${patientId.toLowerCase()}@example.com`,
+                address: "123 Medical Center Dr",
+                totalScans: 0,
+                latestEmotion: "Neutral",
+                lastVisit: new Date().toISOString().split('T')[0]
+            });
+            setReports([]);
+        };
+
+        loadPatientData();
     }, [patientId, router]);
 
     const getEmotionColor = (emotion: string) => {
@@ -73,7 +114,10 @@ function PatientDetailsContent() {
     if (!patient) {
         return (
             <div className="min-h-screen bg-[#F4F7F9] flex items-center justify-center">
-                <div className="spinner"></div>
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-[#3B6F8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-[#3B6F8E] font-semibold">Loading patient details...</p>
+                </div>
             </div>
         );
     }
@@ -420,9 +464,14 @@ function PatientDetailsContent() {
 
 export default function PatientDetailsPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-[#F4F7F9] flex items-center justify-center">
-            <div className="text-[#3B6F8E]">Loading...</div>
-        </div>}>
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#F4F7F9] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-[#3B6F8E] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-[#3B6F8E] font-semibold">Loading patient details...</p>
+                </div>
+            </div>
+        }>
             <PatientDetailsContent />
         </Suspense>
     );

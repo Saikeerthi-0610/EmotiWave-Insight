@@ -440,7 +440,11 @@ export default function DoctorDashboard() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.3 + index * 0.05 }}
-                                        onClick={() => router.push(`/patient-details?id=${patient.id}`)}
+                                        onClick={() => {
+                                            // Store patient data in localStorage for instant access
+                                            localStorage.setItem('selectedPatient', JSON.stringify(patient));
+                                            router.push(`/patient-details?id=${patient.id}`);
+                                        }}
                                         whileHover={{ x: 5 }}
                                     >
                                         <div className="flex items-center justify-between">
